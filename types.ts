@@ -9,7 +9,36 @@ export type AuthorityType =
   | 'thames-water'
   | 'streetlink'
   | 'lime'
-  | 'network-rail';
+  | 'network-rail'
+  | 'ukpn'
+  | 'cadent-gas'
+  | 'openreach'
+  | 'veolia'
+  | 'biffa'
+  | 'serco'
+  | 'crown-estate'
+  | 'grosvenor'
+  | 'great-portland-estates'
+  | 'cadogan'
+  | 'howard-de-walden'
+  | 'portman-estate'
+  | 'shaftesbury-capital'
+  | 'british-land'
+  | 'landsec'
+  | 'argent'
+  | 'peabody'
+  | 'lq'
+  | 'clarion'
+  | 'notting-hill-genesis'
+  | 'mtvh'
+  | 'rspca'
+  | 'environment-agency'
+  | 'port-of-london'
+  | 'hse'
+  | 'national-highways'
+  | 'tier'
+  | 'dott'
+  | 'voi';
 
 export type SubmissionMethod = 'open311' | 'email' | 'deeplink';
 
@@ -48,13 +77,51 @@ export type CategoryId =
   | 'flooding'
   | 'asb'
   | 'obstructing-scooter'
-  | 'damaged-bike';
+  | 'damaged-bike'
+  // Streets additions
+  | 'dangerous-trees'
+  | 'missing-manhole-cover'
+  | 'damaged-street-furniture'
+  | 'damaged-road-signs'
+  | 'faulty-parking-meters'
+  // Environment additions
+  | 'dog-fouling'
+  | 'litter'
+  | 'pest-infestation'
+  | 'japanese-knotweed'
+  | 'air-quality'
+  // Utilities
+  | 'gas-leak'
+  | 'power-outage'
+  | 'water-leak'
+  | 'blocked-drain'
+  | 'dangling-cables'
+  // Transport additions
+  | 'overground-dlr-elizabeth'
+  | 'tram-issues'
+  | 'taxi-complaint'
+  | 'rail-station'
+  | 'blocked-dropped-kerb'
+  | 'obstructing-scooter-tier'
+  | 'obstructing-scooter-dott'
+  | 'obstructing-scooter-voi'
+  // Housing
+  | 'housing-disrepair'
+  | 'building-safety'
+  | 'estate-maintenance'
+  // Animals & environment
+  | 'injured-animal'
+  | 'river-pollution'
+  | 'dead-animal';
 
 export type CategoryGroup =
   | 'streets'
   | 'environment'
   | 'transport'
   | 'safety'
+  | 'utilities'
+  | 'housing'
+  | 'animals'
   | 'other';
 
 export interface ExtraFieldDef {

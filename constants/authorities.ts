@@ -54,7 +54,7 @@ export const AUTHORITIES: Authority[] = [
   borough('wandsworth', 'Wandsworth', 'customer.services@wandsworth.gov.uk', 'https://www.wandsworth.gov.uk'),
   borough('westminster', 'Westminster', 'customer.services@westminster.gov.uk', 'https://www.westminster.gov.uk'),
 
-  // === Non-borough authorities ===
+  // === Transport ===
   {
     id: 'tfl',
     name: 'Transport for London',
@@ -63,6 +63,8 @@ export const AUTHORITIES: Authority[] = [
     websiteUrl: 'https://tfl.gov.uk',
     deepLinkUrlTemplate: 'https://streetcare.tfl.gov.uk/report/new?latitude={{lat}}&longitude={{lon}}',
   },
+
+  // === Police ===
   {
     id: 'met-police',
     name: 'Metropolitan Police',
@@ -77,13 +79,8 @@ export const AUTHORITIES: Authority[] = [
     websiteUrl: 'https://www.cityoflondon.police.uk',
     deepLinkUrl: 'https://www.cityoflondon.police.uk/ro/report/',
   },
-  {
-    id: 'canary-wharf',
-    name: 'Canary Wharf Group',
-    type: 'canary-wharf',
-    contactEmail: 'management@canarywharf.com',
-    websiteUrl: 'https://canarywharf.com',
-  },
+
+  // === Utilities ===
   {
     id: 'thames-water',
     name: 'Thames Water',
@@ -92,6 +89,186 @@ export const AUTHORITIES: Authority[] = [
     deepLinkUrl: 'https://www.thameswater.co.uk/help/report-a-problem',
   },
   {
+    id: 'ukpn',
+    name: 'UK Power Networks',
+    type: 'ukpn',
+    websiteUrl: 'https://www.ukpowernetworks.co.uk',
+    deepLinkUrl: 'https://www.ukpowernetworks.co.uk/power-cut/report-power-cut',
+  },
+  {
+    id: 'cadent-gas',
+    name: 'Cadent Gas (National Gas Emergency)',
+    type: 'cadent-gas',
+    websiteUrl: 'https://www.cadentgas.com',
+    deepLinkUrl: 'https://www.cadentgas.com/emergencies/report-an-emergency',
+  },
+  {
+    id: 'openreach',
+    name: 'Openreach',
+    type: 'openreach',
+    websiteUrl: 'https://www.openreach.com',
+    deepLinkUrl: 'https://www.openreach.com/help-and-support/report-a-problem',
+  },
+
+  // === Waste Contractors ===
+  {
+    id: 'veolia',
+    name: 'Veolia UK',
+    type: 'veolia',
+    contactEmail: 'info@veolia.co.uk',
+    websiteUrl: 'https://www.veolia.co.uk',
+    deepLinkUrl: 'https://www.veolia.co.uk/contact-us',
+  },
+  {
+    id: 'biffa',
+    name: 'Biffa',
+    type: 'biffa',
+    contactEmail: 'enquiries@biffa.co.uk',
+    websiteUrl: 'https://www.biffa.co.uk',
+    deepLinkUrl: 'https://www.biffa.co.uk/contact-us',
+  },
+  {
+    id: 'serco',
+    name: 'Serco',
+    type: 'serco',
+    contactEmail: 'contactus@serco.com',
+    websiteUrl: 'https://www.serco.com',
+    deepLinkUrl: 'https://www.serco.com/contact',
+  },
+
+  // === Private Estates ===
+  {
+    id: 'crown-estate',
+    name: 'The Crown Estate',
+    type: 'crown-estate',
+    contactEmail: 'enquiries@thecrownestate.co.uk',
+    websiteUrl: 'https://www.thecrownestate.co.uk',
+    deepLinkUrl: 'https://www.thecrownestate.co.uk/contact-us',
+  },
+  {
+    id: 'grosvenor',
+    name: 'Grosvenor',
+    type: 'grosvenor',
+    contactEmail: 'enquiries@grosvenor.com',
+    websiteUrl: 'https://www.grosvenor.com',
+    deepLinkUrl: 'https://www.grosvenor.com/contact-us',
+  },
+  {
+    id: 'great-portland-estates',
+    name: 'Great Portland Estates',
+    type: 'great-portland-estates',
+    contactEmail: 'info@gpe.co.uk',
+    websiteUrl: 'https://www.gpe.co.uk',
+    deepLinkUrl: 'https://www.gpe.co.uk/contact',
+  },
+  {
+    id: 'cadogan',
+    name: 'Cadogan Estates',
+    type: 'cadogan',
+    contactEmail: 'enquiries@cadogan.co.uk',
+    websiteUrl: 'https://www.cadogan.co.uk',
+    deepLinkUrl: 'https://www.cadogan.co.uk/contact',
+  },
+  {
+    id: 'howard-de-walden',
+    name: 'The Howard de Walden Estate',
+    type: 'howard-de-walden',
+    contactEmail: 'enquiries@hdwe.co.uk',
+    websiteUrl: 'https://www.hdwe.co.uk',
+    deepLinkUrl: 'https://www.hdwe.co.uk/contact',
+  },
+  {
+    id: 'portman-estate',
+    name: 'The Portman Estate',
+    type: 'portman-estate',
+    contactEmail: 'enquiries@portmanestate.co.uk',
+    websiteUrl: 'https://www.portmanestate.co.uk',
+    deepLinkUrl: 'https://www.portmanestate.co.uk/contact',
+  },
+  {
+    id: 'shaftesbury-capital',
+    name: 'Shaftesbury Capital',
+    type: 'shaftesbury-capital',
+    contactEmail: 'info@shaftesburycapital.com',
+    websiteUrl: 'https://www.shaftesburycapital.com',
+    deepLinkUrl: 'https://www.shaftesburycapital.com/contact',
+  },
+  {
+    id: 'british-land',
+    name: 'British Land',
+    type: 'british-land',
+    contactEmail: 'info@britishland.com',
+    websiteUrl: 'https://www.britishland.com',
+    deepLinkUrl: 'https://www.britishland.com/contact-us',
+  },
+  {
+    id: 'landsec',
+    name: 'Landsec',
+    type: 'landsec',
+    contactEmail: 'enquiries@landsec.com',
+    websiteUrl: 'https://landsec.com',
+    deepLinkUrl: 'https://landsec.com/contact-us',
+  },
+  {
+    id: 'argent',
+    name: 'Argent (King\'s Cross)',
+    type: 'argent',
+    contactEmail: 'info@argentllp.co.uk',
+    websiteUrl: 'https://www.kingscross.co.uk',
+    deepLinkUrl: 'https://www.kingscross.co.uk/contact-us',
+  },
+  {
+    id: 'canary-wharf',
+    name: 'Canary Wharf Group',
+    type: 'canary-wharf',
+    contactEmail: 'management@canarywharf.com',
+    websiteUrl: 'https://canarywharf.com',
+  },
+
+  // === Housing Associations ===
+  {
+    id: 'peabody',
+    name: 'Peabody',
+    type: 'peabody',
+    contactEmail: 'customerservice@peabody.org.uk',
+    websiteUrl: 'https://www.peabody.org.uk',
+    deepLinkUrl: 'https://www.peabody.org.uk/contact-us',
+  },
+  {
+    id: 'lq',
+    name: 'L&Q',
+    type: 'lq',
+    contactEmail: 'contactus@lqgroup.org.uk',
+    websiteUrl: 'https://www.lqgroup.org.uk',
+    deepLinkUrl: 'https://www.lqgroup.org.uk/contact-us',
+  },
+  {
+    id: 'clarion',
+    name: 'Clarion Housing Group',
+    type: 'clarion',
+    contactEmail: 'info@clarionhg.com',
+    websiteUrl: 'https://www.clarionhg.com',
+    deepLinkUrl: 'https://www.myclarionhousing.com/contact-us',
+  },
+  {
+    id: 'notting-hill-genesis',
+    name: 'Notting Hill Genesis',
+    type: 'notting-hill-genesis',
+    contactEmail: 'contactus@nhg.org.uk',
+    websiteUrl: 'https://www.nhg.org.uk',
+    deepLinkUrl: 'https://www.nhg.org.uk/contact-us',
+  },
+  {
+    id: 'mtvh',
+    name: 'Metropolitan Thames Valley Housing',
+    type: 'mtvh',
+    contactEmail: 'customer.services@mtvh.co.uk',
+    websiteUrl: 'https://www.mtvh.co.uk',
+    deepLinkUrl: 'https://www.mtvh.co.uk/contact-us',
+  },
+
+  // === Other Agencies ===
+  {
     id: 'streetlink',
     name: 'StreetLink',
     type: 'streetlink',
@@ -99,12 +276,73 @@ export const AUTHORITIES: Authority[] = [
     deepLinkUrl: 'https://www.streetlink.org.uk/rough-sleeping',
   },
   {
+    id: 'rspca',
+    name: 'RSPCA',
+    type: 'rspca',
+    websiteUrl: 'https://www.rspca.org.uk',
+    deepLinkUrl: 'https://www.rspca.org.uk/utilities/contactus/reportcruelty',
+  },
+  {
+    id: 'environment-agency',
+    name: 'Environment Agency',
+    type: 'environment-agency',
+    websiteUrl: 'https://www.gov.uk/government/organisations/environment-agency',
+    deepLinkUrl: 'https://www.gov.uk/report-an-environmental-incident',
+  },
+  {
+    id: 'port-of-london',
+    name: 'Port of London Authority',
+    type: 'port-of-london',
+    contactEmail: 'info@pla.co.uk',
+    websiteUrl: 'https://www.pla.co.uk',
+    deepLinkUrl: 'https://www.pla.co.uk/Contact',
+  },
+  {
+    id: 'hse',
+    name: 'Health and Safety Executive',
+    type: 'hse',
+    websiteUrl: 'https://www.hse.gov.uk',
+    deepLinkUrl: 'https://www.hse.gov.uk/contact/concerns.htm',
+  },
+  {
+    id: 'national-highways',
+    name: 'National Highways',
+    type: 'national-highways',
+    websiteUrl: 'https://nationalhighways.co.uk',
+    deepLinkUrl: 'https://nationalhighways.co.uk/report-an-issue/',
+  },
+
+  // === Micromobility Operators ===
+  {
     id: 'lime',
     name: 'Lime',
     type: 'lime',
     websiteUrl: 'https://www.li.me',
     deepLinkUrl: 'https://help.li.me/hc/en-us/requests/new',
   },
+  {
+    id: 'tier',
+    name: 'TIER',
+    type: 'tier',
+    websiteUrl: 'https://www.tier.app',
+    deepLinkUrl: 'https://www.tier.app/en/contact',
+  },
+  {
+    id: 'dott',
+    name: 'Dott',
+    type: 'dott',
+    websiteUrl: 'https://ridedott.com',
+    deepLinkUrl: 'https://ridedott.com/contact',
+  },
+  {
+    id: 'voi',
+    name: 'Voi',
+    type: 'voi',
+    websiteUrl: 'https://www.voi.com',
+    deepLinkUrl: 'https://www.voi.com/contact',
+  },
+
+  // === Rail ===
   {
     id: 'network-rail',
     name: 'Network Rail',

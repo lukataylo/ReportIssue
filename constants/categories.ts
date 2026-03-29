@@ -3,13 +3,18 @@ import { Category, CategoryGroup, CategoryGroupDef } from '../types';
 export const CATEGORY_GROUPS: CategoryGroupDef[] = [
   { id: 'streets', title: 'Streets & Pavements' },
   { id: 'environment', title: 'Environment' },
+  { id: 'utilities', title: 'Utilities' },
   { id: 'transport', title: 'Transport' },
   { id: 'safety', title: 'Safety & Crime' },
+  { id: 'housing', title: 'Housing' },
+  { id: 'animals', title: 'Animals & Waterways' },
   { id: 'other', title: 'Other' },
 ];
 
 export const CATEGORIES: Category[] = [
-  // === STREETS ===
+  // =========================================================================
+  // STREETS & PAVEMENTS
+  // =========================================================================
   {
     id: 'potholes',
     title: 'Potholes',
@@ -54,8 +59,69 @@ export const CATEGORIES: Category[] = [
     fixedAuthorityId: 'tfl',
     escalationDays: 15,
   },
+  {
+    id: 'dangerous-trees',
+    title: 'Dangerous Trees',
+    subtitle: 'Fallen, leaning or overhanging',
+    icon: '🌲',
+    color: '#3A7BD5',
+    group: 'streets',
+    responsibleAuthority: 'auto',
+    escalationDays: 3,
+    extraFields: [
+      { key: 'urgency', label: 'Urgency', type: 'options', options: ['Blocking road/path', 'Risk of falling', 'Overhanging'] },
+    ],
+  },
+  {
+    id: 'missing-manhole-cover',
+    title: 'Missing Manhole Cover',
+    subtitle: 'Open or damaged manhole',
+    icon: '⚠️',
+    color: '#E53E3E',
+    group: 'streets',
+    responsibleAuthority: 'auto',
+    escalationDays: 1,
+    extraFields: [
+      { key: 'location', label: 'Location', type: 'options', options: ['Road', 'Pavement', 'Verge'] },
+    ],
+  },
+  {
+    id: 'damaged-street-furniture',
+    title: 'Damaged Street Furniture',
+    subtitle: 'Benches, bollards, railings',
+    icon: '🪑',
+    color: '#3A7BD5',
+    group: 'streets',
+    responsibleAuthority: 'auto',
+    escalationDays: 14,
+    extraFields: [
+      { key: 'type', label: 'Type', type: 'options', options: ['Bench', 'Bollard', 'Railing', 'Bin', 'Post', 'Other'] },
+    ],
+  },
+  {
+    id: 'damaged-road-signs',
+    title: 'Damaged Road Signs',
+    subtitle: 'Missing or broken signs',
+    icon: '🪧',
+    color: '#3A7BD5',
+    group: 'streets',
+    responsibleAuthority: 'auto',
+    escalationDays: 10,
+  },
+  {
+    id: 'faulty-parking-meters',
+    title: 'Faulty Parking Meters',
+    subtitle: 'Broken pay & display',
+    icon: '🅿️',
+    color: '#3A7BD5',
+    group: 'streets',
+    responsibleAuthority: 'auto',
+    escalationDays: 5,
+  },
 
-  // === ENVIRONMENT ===
+  // =========================================================================
+  // ENVIRONMENT
+  // =========================================================================
   {
     id: 'fly-tipping',
     title: 'Fly-Tipping',
@@ -113,8 +179,136 @@ export const CATEGORIES: Category[] = [
       { key: 'floodType', label: 'Type of Flooding', type: 'options', options: ['Surface water', 'Sewage'] },
     ],
   },
+  {
+    id: 'dog-fouling',
+    title: 'Dog Fouling',
+    subtitle: 'Persistent problem areas',
+    icon: '🐕',
+    color: '#2BAE66',
+    group: 'environment',
+    responsibleAuthority: 'auto',
+    escalationDays: 7,
+  },
+  {
+    id: 'litter',
+    title: 'Litter',
+    subtitle: 'General litter on streets',
+    icon: '🚮',
+    color: '#2BAE66',
+    group: 'environment',
+    responsibleAuthority: 'auto',
+    escalationDays: 5,
+  },
+  {
+    id: 'pest-infestation',
+    title: 'Pest Infestation',
+    subtitle: 'Rats, mice, cockroaches',
+    icon: '🐀',
+    color: '#2BAE66',
+    group: 'environment',
+    responsibleAuthority: 'auto',
+    escalationDays: 5,
+    extraFields: [
+      { key: 'pestType', label: 'Type of Pest', type: 'options', options: ['Rats', 'Mice', 'Cockroaches', 'Foxes', 'Pigeons', 'Other'] },
+    ],
+  },
+  {
+    id: 'japanese-knotweed',
+    title: 'Japanese Knotweed',
+    subtitle: 'Invasive species on public land',
+    icon: '🌿',
+    color: '#2BAE66',
+    group: 'environment',
+    responsibleAuthority: 'auto',
+    escalationDays: 14,
+  },
+  {
+    id: 'air-quality',
+    title: 'Air Quality',
+    subtitle: 'Smoke, dust, fumes',
+    icon: '💨',
+    color: '#2BAE66',
+    group: 'environment',
+    responsibleAuthority: 'auto',
+    escalationDays: 5,
+    extraFields: [
+      { key: 'source', label: 'Likely Source', type: 'options', options: ['Construction site', 'Business/restaurant', 'Bonfire', 'Vehicle', 'Unknown'] },
+    ],
+  },
 
-  // === TRANSPORT ===
+  // =========================================================================
+  // UTILITIES
+  // =========================================================================
+  {
+    id: 'gas-leak',
+    title: 'Gas Leak',
+    subtitle: 'Smell of gas — call 0800 111 999',
+    icon: '🔥',
+    color: '#E53E3E',
+    group: 'utilities',
+    responsibleAuthority: 'cadent-gas',
+    fixedAuthorityId: 'cadent-gas',
+    escalationDays: 0,
+  },
+  {
+    id: 'power-outage',
+    title: 'Power Cut / Electrical Hazard',
+    subtitle: 'Outage or exposed wiring',
+    icon: '⚡',
+    color: '#E53E3E',
+    group: 'utilities',
+    responsibleAuthority: 'ukpn',
+    fixedAuthorityId: 'ukpn',
+    escalationDays: 1,
+    extraFields: [
+      { key: 'type', label: 'Type', type: 'options', options: ['Power cut', 'Exposed wiring', 'Sparking equipment', 'Damaged substation'] },
+    ],
+  },
+  {
+    id: 'water-leak',
+    title: 'Water Leak',
+    subtitle: 'Leaking pipe or hydrant',
+    icon: '💧',
+    color: '#3A7BD5',
+    group: 'utilities',
+    responsibleAuthority: 'thames-water',
+    fixedAuthorityId: 'thames-water',
+    escalationDays: 2,
+    extraFields: [
+      { key: 'severity', label: 'Severity', type: 'options', options: ['Trickling', 'Steady flow', 'Gushing'] },
+    ],
+  },
+  {
+    id: 'blocked-drain',
+    title: 'Blocked Drain',
+    subtitle: 'Blocked or overflowing drain',
+    icon: '🕳️',
+    color: '#3A7BD5',
+    group: 'utilities',
+    responsibleAuthority: 'auto',
+    escalationDays: 3,
+    extraFields: [
+      { key: 'location', label: 'Drain Location', type: 'options', options: ['Road gully', 'Pavement', 'Near property'] },
+    ],
+  },
+  {
+    id: 'dangling-cables',
+    title: 'Dangling Cables / Open Cabinet',
+    subtitle: 'Telecom hazards',
+    icon: '🔌',
+    color: '#FF6B35',
+    group: 'utilities',
+    responsibleAuthority: 'openreach',
+    fixedAuthorityId: 'openreach',
+    escalationDays: 3,
+    extraFields: [
+      { key: 'type', label: 'Type', type: 'options', options: ['Dangling cable', 'Open cabinet', 'Open manhole'] },
+    ],
+  },
+
+  // =========================================================================
+  // TRANSPORT
+  // =========================================================================
   {
     id: 'traffic-lights',
     title: 'Traffic Lights',
@@ -149,6 +343,31 @@ export const CATEGORIES: Category[] = [
     escalationDays: 5,
   },
   {
+    id: 'overground-dlr-elizabeth',
+    title: 'Overground / DLR / Elizabeth Line',
+    subtitle: 'Station or service issues',
+    icon: '🚆',
+    color: '#FF6B35',
+    group: 'transport',
+    responsibleAuthority: 'tfl',
+    fixedAuthorityId: 'tfl',
+    escalationDays: 5,
+    extraFields: [
+      { key: 'service', label: 'Service', type: 'options', options: ['Overground', 'DLR', 'Elizabeth line'] },
+    ],
+  },
+  {
+    id: 'tram-issues',
+    title: 'Tram Issues',
+    subtitle: 'Croydon Tramlink problems',
+    icon: '🚃',
+    color: '#FF6B35',
+    group: 'transport',
+    responsibleAuthority: 'tfl',
+    fixedAuthorityId: 'tfl',
+    escalationDays: 5,
+  },
+  {
     id: 'bus-lanes',
     title: 'Bus Lanes',
     subtitle: 'Obstructions or damage',
@@ -171,14 +390,83 @@ export const CATEGORIES: Category[] = [
     escalationDays: 10,
   },
   {
+    id: 'taxi-complaint',
+    title: 'Taxi / Private Hire Complaint',
+    subtitle: 'Report a taxi or PHV issue',
+    icon: '🚕',
+    color: '#FF6B35',
+    group: 'transport',
+    responsibleAuthority: 'tfl',
+    fixedAuthorityId: 'tfl',
+    escalationDays: 14,
+    extraFields: [
+      { key: 'vehicleType', label: 'Vehicle Type', type: 'options', options: ['Black cab', 'Private hire (e.g. Uber)', 'Minicab'] },
+      { key: 'registration', label: 'Vehicle Registration', type: 'text', placeholder: 'e.g. AB12 CDE' },
+    ],
+  },
+  {
+    id: 'rail-station',
+    title: 'Rail Station Issues',
+    subtitle: 'National Rail station problems',
+    icon: '🚂',
+    color: '#FF6B35',
+    group: 'transport',
+    responsibleAuthority: 'network-rail',
+    fixedAuthorityId: 'network-rail',
+    escalationDays: 10,
+  },
+  {
+    id: 'blocked-dropped-kerb',
+    title: 'Blocked Dropped Kerb',
+    subtitle: 'Accessibility obstruction',
+    icon: '♿',
+    color: '#FF6B35',
+    group: 'transport',
+    responsibleAuthority: 'auto',
+    escalationDays: 3,
+  },
+  {
     id: 'obstructing-scooter',
-    title: 'Obstructing Scooter',
-    subtitle: 'Badly parked e-scooter/bike',
+    title: 'Obstructing Scooter (Lime)',
+    subtitle: 'Badly parked Lime e-scooter/bike',
     icon: '🛴',
     color: '#00D166',
     group: 'transport',
     responsibleAuthority: 'lime',
     fixedAuthorityId: 'lime',
+    escalationDays: 1,
+  },
+  {
+    id: 'obstructing-scooter-tier',
+    title: 'Obstructing Scooter (TIER)',
+    subtitle: 'Badly parked TIER e-scooter',
+    icon: '🛴',
+    color: '#0E1A2B',
+    group: 'transport',
+    responsibleAuthority: 'tier',
+    fixedAuthorityId: 'tier',
+    escalationDays: 1,
+  },
+  {
+    id: 'obstructing-scooter-dott',
+    title: 'Obstructing Scooter (Dott)',
+    subtitle: 'Badly parked Dott e-scooter',
+    icon: '🛴',
+    color: '#6C63FF',
+    group: 'transport',
+    responsibleAuthority: 'dott',
+    fixedAuthorityId: 'dott',
+    escalationDays: 1,
+  },
+  {
+    id: 'obstructing-scooter-voi',
+    title: 'Obstructing Scooter (Voi)',
+    subtitle: 'Badly parked Voi e-scooter',
+    icon: '🛴',
+    color: '#F46C63',
+    group: 'transport',
+    responsibleAuthority: 'voi',
+    fixedAuthorityId: 'voi',
     escalationDays: 1,
   },
   {
@@ -193,7 +481,9 @@ export const CATEGORIES: Category[] = [
     escalationDays: 3,
   },
 
-  // === SAFETY ===
+  // =========================================================================
+  // SAFETY & CRIME
+  // =========================================================================
   {
     id: 'crime',
     title: 'Report Crime',
@@ -239,8 +529,103 @@ export const CATEGORIES: Category[] = [
       { key: 'frequency', label: 'Is this ongoing?', type: 'options', options: ['Happening now', 'Recurring', 'One-off'] },
     ],
   },
+  {
+    id: 'building-safety',
+    title: 'Building Safety Concern',
+    subtitle: 'Unsafe scaffolding or structures',
+    icon: '🏗️',
+    color: '#E53E3E',
+    group: 'safety',
+    responsibleAuthority: 'hse',
+    fixedAuthorityId: 'hse',
+    escalationDays: 3,
+    extraFields: [
+      { key: 'type', label: 'Concern Type', type: 'options', options: ['Unsafe scaffolding', 'Dangerous structure', 'Construction site hazard', 'Cladding concern'] },
+    ],
+  },
 
-  // === OTHER ===
+  // =========================================================================
+  // HOUSING
+  // =========================================================================
+  {
+    id: 'housing-disrepair',
+    title: 'Housing Disrepair',
+    subtitle: 'Report to council or housing association',
+    icon: '🏠',
+    color: '#7F77DD',
+    group: 'housing',
+    responsibleAuthority: 'auto',
+    escalationDays: 14,
+    extraFields: [
+      { key: 'issue', label: 'Issue', type: 'options', options: ['Damp/mould', 'Heating failure', 'Plumbing', 'Structural', 'Roof leak', 'Pest infestation', 'Other'] },
+      { key: 'landlord', label: 'Landlord / Housing Association', type: 'text', placeholder: 'e.g. Peabody, L&Q, council' },
+    ],
+  },
+  {
+    id: 'estate-maintenance',
+    title: 'Estate Maintenance',
+    subtitle: 'Communal area issues',
+    icon: '🏘️',
+    color: '#7F77DD',
+    group: 'housing',
+    responsibleAuthority: 'auto',
+    escalationDays: 7,
+    extraFields: [
+      { key: 'issue', label: 'Issue', type: 'options', options: ['Lighting', 'Cleaning', 'Broken door/gate', 'Lift out of order', 'Rubbish accumulation', 'Other'] },
+      { key: 'landlord', label: 'Landlord / Housing Association', type: 'text', placeholder: 'e.g. Peabody, L&Q, council' },
+    ],
+  },
+
+  // =========================================================================
+  // ANIMALS & WATERWAYS
+  // =========================================================================
+  {
+    id: 'injured-animal',
+    title: 'Injured / Stray Animal',
+    subtitle: 'Alert RSPCA',
+    icon: '🐾',
+    color: '#E8734A',
+    group: 'animals',
+    responsibleAuthority: 'rspca',
+    fixedAuthorityId: 'rspca',
+    escalationDays: 1,
+    extraFields: [
+      { key: 'animalType', label: 'Animal', type: 'options', options: ['Dog', 'Cat', 'Fox', 'Bird', 'Other'] },
+      { key: 'condition', label: 'Condition', type: 'options', options: ['Injured', 'Stray/lost', 'Trapped', 'Neglected'] },
+    ],
+  },
+  {
+    id: 'river-pollution',
+    title: 'River Pollution',
+    subtitle: 'Report to Environment Agency',
+    icon: '🏭',
+    color: '#3A7BD5',
+    group: 'animals',
+    responsibleAuthority: 'environment-agency',
+    fixedAuthorityId: 'environment-agency',
+    escalationDays: 1,
+    extraFields: [
+      { key: 'type', label: 'Pollution Type', type: 'options', options: ['Sewage discharge', 'Chemical/oil spill', 'Debris/rubbish', 'Discolouration', 'Bad smell'] },
+    ],
+  },
+  {
+    id: 'dead-animal',
+    title: 'Dead Animal on Road',
+    subtitle: 'Request removal',
+    icon: '🦊',
+    color: '#E8734A',
+    group: 'animals',
+    responsibleAuthority: 'auto',
+    escalationDays: 2,
+    extraFields: [
+      { key: 'animalType', label: 'Animal', type: 'options', options: ['Fox', 'Cat', 'Dog', 'Bird', 'Other'] },
+      { key: 'location', label: 'Location', type: 'options', options: ['Road', 'Pavement', 'Park/green space'] },
+    ],
+  },
+
+  // =========================================================================
+  // OTHER
+  // =========================================================================
   {
     id: 'rough-sleeping',
     title: 'Rough Sleeping',
