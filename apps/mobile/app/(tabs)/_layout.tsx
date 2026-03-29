@@ -20,9 +20,10 @@ export default function TabLayout() {
         name="index"
         options={{
           headerTitle: 'Fix It London',
+          headerShown: false,
           title: 'Report',
           tabBarIcon: ({ color }) => (
-            <Text style={{ fontSize: 20, color }}>📢</Text>
+            <Text style={{ fontSize: 20, color }}>📷</Text>
           ),
         }}
       />

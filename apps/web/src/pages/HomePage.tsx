@@ -1,28 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
-  CATEGORIES,
-  CATEGORY_GROUPS,
-  getAuthorityById,
+  getCategoryById,
   findBoroughByName,
+  Report,
 } from '@fixitlondon/shared';
 import ProfileModal from '../components/ProfileModal';
-import { hasProfile } from '../services/storage';
-
-interface DetectedBorough {
-  name: string;
-  id: string;
-}
+import { hasProfile, getReports } from '../services/storage';
 
 export default function HomePage() {
-  const [borough, setBorough] = useState<DetectedBorough | null>(null);
-  const [detecting, setDetecting] = useState(true);
+  const navigate = useNavigate();
+  const [boroughName, setBoroughName] = useState<string | null>(null);
   const [showProfile, setShowProfile] = useState(false);
+  const [recentReports, setRecentReports] = useState<Report[]>([]);
 
   useEffect(() => {
-    if (!hasProfile()) {
-      setShowProfile(true);
-    }
+    if (!hasProfile()) setShowProfile(true);
+    setRecentReports(getReports().slice(0, 3));
 
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -35,70 +29,83 @@ export default function HomePage() {
             const district = data?.result?.[0]?.admin_district;
             if (district) {
               const b = findBoroughByName(district);
-              if (b) setBorough({ name: b.name, id: b.id });
+              if (b) setBoroughName(b.name);
             }
           } catch { /* ignore */ }
-          setDetecting(false);
         },
-        () => setDetecting(false),
+        () => {},
         { timeout: 10000 }
       );
-    } else {
-      setDetecting(false);
     }
   }, []);
+
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        navigate('/report/new', { state: { photoUri: reader.result as string } });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <>
       {showProfile && <ProfileModal onComplete={() => setShowProfile(false)} />}
 
-      <div className="borough-banner">
-        {detecting ? (
-          'Detecting your borough...'
-        ) : borough ? (
-          <>Reporting in: <span className="borough-name">{borough.name}</span></>
-        ) : (
-          'Could not detect borough — reports will use FixMyStreet'
-        )}
+      {/* Hero section */}
+      <div className="hero">
+        <h1 className="hero-title">See something?<br />Report it.</h1>
+        <p className="hero-subtitle">
+          {boroughName ? `Reporting in ${boroughName}` : 'Upload a photo to get started'}
+        </p>
+
+        <label className="camera-btn">
+          <span className="camera-btn-icon">📷</span>
+          <span className="camera-btn-text">Upload Photo & Report</span>
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handlePhotoSelect}
+            style={{ display: 'none' }}
+          />
+        </label>
+
+        <div className="alt-row">
+          <Link to="/report/new" className="alt-btn">Skip Photo</Link>
+          <Link to="/report/categories" className="alt-btn">Browse Categories</Link>
+        </div>
       </div>
 
-      <h1 className="heading">What would you like to report?</h1>
-
-      {CATEGORY_GROUPS.map((group) => {
-        const groupCategories = CATEGORIES.filter((c) => c.group === group.id);
-        if (groupCategories.length === 0) return null;
-
-        return (
-          <div key={group.id} className="section">
-            <div className="section-title">{group.title}</div>
-            {groupCategories.map((category) => (
-              <Link
-                key={category.id}
-                to={`/report/${category.id}`}
-                className="card"
-                style={{ borderLeftColor: category.color }}
-              >
-                <span className="card-icon">{category.icon}</span>
-                <div className="card-text">
-                  <div className="card-title">{category.title}</div>
-                  <div className="card-subtitle">{category.subtitle}</div>
-                </div>
-                <span
-                  className="card-badge"
-                  style={{
-                    backgroundColor: category.color + '15',
-                    color: category.color,
-                  }}
-                >
-                  {category.fixedAuthorityId
-                    ? getAuthorityById(category.fixedAuthorityId)?.name || ''
-                    : borough ? 'Council' : 'Council'}
-                </span>
-              </Link>
-            ))}
+      {/* Recent reports */}
+      {recentReports.length > 0 && (
+        <div className="recent-section">
+          <div className="recent-header">
+            <span className="recent-title">Recent Reports</span>
+            <Link to="/my-reports" className="see-all">See all</Link>
           </div>
-        );
-      })}
+          <div className="recent-row">
+            {recentReports.map((report) => {
+              const cat = getCategoryById(report.categoryId);
+              return (
+                <Link key={report.id} to={`/report-detail/${report.id}`} className="recent-card">
+                  {report.photoUri ? (
+                    <img src={report.photoUri} alt="" className="recent-photo" />
+                  ) : (
+                    <div className="recent-photo recent-photo-placeholder">
+                      <span style={{ fontSize: 24 }}>{cat?.icon || '📢'}</span>
+                    </div>
+                  )}
+                  <div className="recent-card-title">{cat?.title || 'Report'}</div>
+                  <div className="recent-card-status">{report.status.replace(/-/g, ' ')}</div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </>
   );
 }
