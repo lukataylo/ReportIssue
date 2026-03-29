@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Fix It London",
+    "slug": "fix-it-london",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1B2A4A"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.fixitlondon.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Fix It London needs your location to pinpoint where issues are and detect your local council.",
+        "NSCameraUsageDescription": "Fix It London uses your camera to photograph issues you report.",
+        "NSPhotoLibraryUsageDescription": "Fix It London needs access to your photos to attach images to reports."
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1B2A4A"
+      },
+      "package": "com.fixitlondon.app",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-location",
+      "expo-image-picker"
+    ],
+    "scheme": "fixitlondon",
+    "extra": {
+      "eas": {
+        "projectId": "your-eas-project-id"
+      }
+    }
+  }
+}
