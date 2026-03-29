@@ -1,0 +1,8 @@
+{
+  "name": "ReportSE",
+  "description": "Unified civic issue reporter for Southwark, London. Report potholes, fly-tipping, rough sleeping, and more to the correct services automatically.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
