@@ -6,6 +6,7 @@ import {
   getBoroughAuthority,
   findBoroughByName,
   ReportLocation,
+  CategoryId,
 } from '@fixitlondon/shared';
 import { submitReport } from '../services/reportService';
 
@@ -81,7 +82,7 @@ export default function ReportPage() {
     setSubmitting(true);
     try {
       const result = submitReport({
-        categoryId: categoryId as any,
+        categoryId: categoryId as CategoryId,
         description: description.trim(),
         location,
         photoUri,
