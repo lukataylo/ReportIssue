@@ -15,6 +15,21 @@ const SERVICE_CODES: Record<string, string> = {
   noise: 'Noise report',
   asb: 'Other',
   'abandoned-vehicle': 'Abandoned vehicles',
+  'dangerous-trees': 'Trees',
+  'missing-manhole-cover': 'Manhole cover - Loss or damaged',
+  'damaged-street-furniture': 'Street furniture',
+  'damaged-road-signs': 'Signs/bollards',
+  'faulty-parking-meters': 'Parking meters/machines',
+  'dog-fouling': 'Dog fouling',
+  litter: 'Litter',
+  'pest-infestation': 'Pest problem',
+  'japanese-knotweed': 'Trees',
+  'air-quality': 'Other',
+  'blocked-drain': 'Blocked drain',
+  'blocked-dropped-kerb': 'Pavements/footpaths',
+  'housing-disrepair': 'Other',
+  'estate-maintenance': 'Other',
+  'dead-animal': 'Dead animal',
 };
 
 export async function submitViaOpen311(
