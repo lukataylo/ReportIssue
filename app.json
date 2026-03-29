@@ -11,7 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#1B2A4A"
     },
-    "assetBundlePatterns": ["**/*"],
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.fixitlondon.app",
