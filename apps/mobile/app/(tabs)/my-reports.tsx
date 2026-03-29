@@ -8,9 +8,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { Report } from '../../types';
+import { Report, getCategoryById } from '@fixitlondon/shared';
 import { getReports } from '../../services/storage';
-import { getCategoryById } from '../../constants/categories';
 import { getEscalationStatus } from '../../services/escalationService';
 
 export default function MyReportsScreen() {

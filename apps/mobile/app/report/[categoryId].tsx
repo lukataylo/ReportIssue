@@ -16,11 +16,9 @@ import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import MapView, { Marker } from 'react-native-maps';
-import { getCategoryById } from '../../constants/categories';
-import { getAuthorityById, getBoroughAuthority } from '../../constants/authorities';
+import { getCategoryById, getAuthorityById, getBoroughAuthority, CategoryId, ReportLocation } from '@fixitlondon/shared';
 import { submitReport } from '../../services/reportService';
 import { detectBorough, reverseGeocode } from '../../services/boroughDetection';
-import { CategoryId, ReportLocation } from '../../types';
 
 const LONDON_CENTER = {
   latitude: 51.509,

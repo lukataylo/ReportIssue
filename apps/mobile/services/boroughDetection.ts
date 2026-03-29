@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DetectedBorough } from '../types';
-import { findBoroughByName } from '../constants/boroughs';
+import { DetectedBorough, findBoroughByName } from '@fixitlondon/shared';
 
 const CACHE_KEY = 'fixitlondon_borough_cache';
 

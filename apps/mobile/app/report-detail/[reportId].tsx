@@ -10,9 +10,8 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { Report } from '../../types';
+import { Report, getCategoryById, lookupMP, getWriteToThemUrl } from '@fixitlondon/shared';
 import { getReportById, deleteReport } from '../../services/storage';
-import { getCategoryById } from '../../constants/categories';
 import {
   getEscalationStatus,
   escalateReport,
@@ -20,8 +19,6 @@ import {
   daysUntilEscalation,
 } from '../../services/escalationService';
 import { composeEscalationEmail } from '../../services/emailService';
-import { lookupMP } from '../../services/representativeLookup';
-import { getWriteToThemUrl } from '../../services/representativeLookup';
 import { getProfile } from '../../services/profileService';
 
 export default function ReportDetailScreen() {

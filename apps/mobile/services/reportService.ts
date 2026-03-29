@@ -1,100 +1,13 @@
-import { Report, CategoryId, ReportLocation, Authority, UserProfile } from '../types';
-import { getCategoryById } from '../constants/categories';
-import { getAuthorityById, getBoroughAuthority } from '../constants/authorities';
-import { submitViaOpen311, getFixMyStreetUrl } from './open311';
+import {
+  Report, CategoryId, ReportLocation,
+  getCategoryById, calculateEscalationDate, lookupMP,
+  submitViaOpen311, getFixMyStreetUrl,
+  generateId, generateReference, resolveAuthority, resolveDeepLinkUrl,
+} from '@fixitlondon/shared';
 import { composeReportEmail } from './emailService';
 import { saveReport } from './storage';
-import { calculateEscalationDate } from './escalationService';
-import { lookupMP } from './representativeLookup';
 import { getProfile } from './profileService';
 import * as WebBrowser from 'expo-web-browser';
-
-function generateId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
-
-function generateReference(authorityType: string): string {
-  const prefixes: Record<string, string> = {
-    borough: 'FIL',
-    tfl: 'TFL',
-    'met-police': 'MET',
-    'city-police': 'CLP',
-    'canary-wharf': 'CWG',
-    'thames-water': 'THW',
-    streetlink: 'STL',
-    lime: 'LME',
-    'network-rail': 'NRL',
-    ukpn: 'UKP',
-    'cadent-gas': 'GAS',
-    openreach: 'OPR',
-    veolia: 'VEO',
-    biffa: 'BIF',
-    serco: 'SRC',
-    'crown-estate': 'CRE',
-    grosvenor: 'GRV',
-    'great-portland-estates': 'GPE',
-    cadogan: 'CAD',
-    'howard-de-walden': 'HDW',
-    'portman-estate': 'PRT',
-    'shaftesbury-capital': 'SHC',
-    'british-land': 'BRL',
-    landsec: 'LSC',
-    argent: 'ARG',
-    peabody: 'PBY',
-    lq: 'LNQ',
-    clarion: 'CLR',
-    'notting-hill-genesis': 'NHG',
-    mtvh: 'MTV',
-    rspca: 'RSP',
-    'environment-agency': 'ENV',
-    'port-of-london': 'PLA',
-    hse: 'HSE',
-    'national-highways': 'NHW',
-    tier: 'TIR',
-    dott: 'DOT',
-    voi: 'VOI',
-  };
-  const prefix = prefixes[authorityType] || 'FIL';
-  const year = new Date().getFullYear();
-  const num = Math.floor(1000 + Math.random() * 9000);
-  return `${prefix}-${year}-${num}`;
-}
-
-function resolveAuthority(
-  categoryId: CategoryId,
-  fixedAuthorityId: string | undefined,
-  location: ReportLocation
-): Authority {
-  // Fixed authority categories (TfL, police, etc.)
-  if (fixedAuthorityId) {
-    // Special case: crime in City of London → City Police
-    if (
-      (categoryId === 'crime' || categoryId === 'suspicious-activity') &&
-      location.boroughId === 'city-of-london'
-    ) {
-      return getAuthorityById('city-police')!;
-    }
-    return getAuthorityById(fixedAuthorityId)!;
-  }
-
-  // Auto-detect: use detected borough
-  if (location.boroughId) {
-    const borough = getBoroughAuthority(location.boroughId);
-    if (borough) return borough;
-  }
-
-  // Fallback to a generic entry
-  return getAuthorityById('southwark')!;
-}
-
-function resolveDeepLinkUrl(authority: Authority, location: ReportLocation): string | null {
-  if (authority.deepLinkUrlTemplate) {
-    return authority.deepLinkUrlTemplate
-      .replace('{{lat}}', location.latitude.toString())
-      .replace('{{lon}}', location.longitude.toString());
-  }
-  return authority.deepLinkUrl || null;
-}
 
 export interface SubmitResult {
   report: Report;

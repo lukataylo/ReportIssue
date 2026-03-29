@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserProfile } from '../types';
+import { UserProfile } from '@fixitlondon/shared';
 
 const PROFILE_KEY = 'fixitlondon_profile';
 

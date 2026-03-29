@@ -9,10 +9,8 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Location from 'expo-location';
-import { CATEGORIES, CATEGORY_GROUPS } from '../../constants/categories';
+import { CATEGORIES, CATEGORY_GROUPS, getAuthorityById, getBoroughAuthority, DetectedBorough, Category } from '@fixitlondon/shared';
 import { detectBorough } from '../../services/boroughDetection';
-import { getAuthorityById, getBoroughAuthority } from '../../constants/authorities';
-import { DetectedBorough, Category } from '../../types';
 
 export default function HomeScreen() {
   const router = useRouter();

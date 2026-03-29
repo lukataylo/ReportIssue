@@ -23,3 +23,15 @@ export {
   composeReportEmailUrl,
   composeEscalationEmailUrl,
 } from './services/emailComposer';
+
+// Report helpers (shared between mobile and web)
+export {
+  REFERENCE_PREFIXES,
+  generateId,
+  generateReference,
+  resolveAuthority,
+  resolveDeepLinkUrl,
+} from './services/reportHelpers';
+
+// Re-export escalation action types
+export type { EscalationAction, EscalationStatus } from './services/escalationService';

@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Report } from '../types';
+import { Report } from '@fixitlondon/shared';
 
 const REPORTS_KEY = 'fixitlondon_reports';
 const OLD_KEY = 'reportse_reports';

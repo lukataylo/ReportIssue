@@ -2,9 +2,8 @@ import { useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import { Report } from '../../types';
+import { Report, getCategoryById, CATEGORY_GROUPS, CATEGORIES } from '@fixitlondon/shared';
 import { getReports } from '../../services/storage';
-import { getCategoryById, CATEGORY_GROUPS, CATEGORIES } from '../../constants/categories';
 
 // Central London — covers all boroughs at this zoom
 const LONDON_REGION = {
