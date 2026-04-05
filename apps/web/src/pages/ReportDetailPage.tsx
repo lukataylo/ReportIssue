@@ -7,8 +7,21 @@ import {
   daysUntilEscalation,
   composeEscalationEmailUrl,
   getWriteToThemUrl,
+  getAvailableLetterTypes,
+  generateLetter,
+  getAuthorityById,
+  GeneratedLetter,
+  LetterType,
+  LetterRecipient,
 } from '@fixitlondon/shared';
 import { getReportById, updateReport, deleteReport, getProfile } from '../services/storage';
+
+const OMBUDSMAN_RECIPIENT: LetterRecipient = {
+  name: 'Local Government and Social Care Ombudsman',
+  role: 'Ombudsman',
+  organisation: 'LGSCO',
+  address: 'PO Box 4771, Coventry CV4 0EH',
+};
 
 export default function ReportDetailPage() {
   const { reportId } = useParams<{ reportId: string }>();
@@ -32,6 +45,85 @@ export default function ReportDetailPage() {
 
   const category = getCategoryById(report.categoryId);
   const escalation = getEscalationStatus(report);
+  const [letterModal, setLetterModal] = useState<GeneratedLetter | null>(null);
+  const availableLetterTypes = getAvailableLetterTypes(report);
+
+  const getRecipient = (letterType: LetterType): LetterRecipient => {
+    if (letterType === 'ombudsman-complaint') return OMBUDSMAN_RECIPIENT;
+    if (letterType === 'escalation-councillor') {
+      return {
+        name: report.councillorName || '[Councillor Name]',
+        role: 'Ward Councillor',
+        organisation: report.authorityName || 'Local Council',
+        email: report.councillorEmail,
+      };
+    }
+    if (letterType === 'escalation-mp') {
+      return {
+        name: report.mpName || '[MP Name]',
+        role: 'Member of Parliament',
+        organisation: 'House of Commons',
+        email: report.mpEmail,
+      };
+    }
+    const authority = getAuthorityById(report.authorityId);
+    return {
+      name: authority?.name || report.authorityName,
+      role: 'Complaints Department',
+      organisation: authority?.name || report.authorityName,
+      email: authority?.contactEmail,
+    };
+  };
+
+  const handleGenerateLetter = (letterType: LetterType) => {
+    const profile = getProfile();
+    if (!profile) {
+      alert('Please set up your profile first (name and postcode) in Settings.');
+      return;
+    }
+    if (!category) return;
+    const daysSince = Math.floor((Date.now() - new Date(report.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+    const escalationDates = report.escalationHistory
+      .filter((e) => e.stage >= 2)
+      .map((e) => new Date(e.date).toLocaleDateString('en-GB'));
+
+    const letter = generateLetter(letterType, {
+      report,
+      category,
+      profile,
+      recipient: getRecipient(letterType),
+      daysSinceSubmission: daysSince,
+      previousEscalationDates: escalationDates,
+    });
+    setLetterModal(letter);
+  };
+
+  const handleCopyLetter = () => {
+    if (!letterModal) return;
+    navigator.clipboard.writeText(letterModal.formattedText).then(
+      () => alert('Letter copied to clipboard.'),
+      () => alert('Failed to copy.'),
+    );
+  };
+
+  const handlePrintLetter = () => {
+    if (!letterModal) return;
+    const w = window.open('', '_blank');
+    if (!w) return;
+    w.document.write(`<html><head><title>${letterModal.subject}</title>
+      <style>body{font-family:Georgia,serif;font-size:14px;line-height:1.7;max-width:700px;margin:40px auto;padding:0 20px;white-space:pre-wrap;}</style>
+      </head><body>${letterModal.formattedText.replace(/\n/g, '<br>')}</body></html>`);
+    w.document.close();
+    w.print();
+  };
+
+  const handleEmailLetter = () => {
+    if (!letterModal) return;
+    const email = letterModal.recipient.email || '';
+    const subject = encodeURIComponent(letterModal.subject);
+    const body = encodeURIComponent(letterModal.formattedText);
+    window.open(`mailto:${email}?subject=${subject}&body=${body}`, '_self');
+  };
 
   // Success view after submission
   if (justSubmitted) {
@@ -215,6 +307,47 @@ export default function ReportDetailPage() {
           );
         })}
       </div>
+
+      {/* Letter Generator */}
+      <div className="letter-section">
+        <div className="letter-section-title">Generate Formal Letter</div>
+        {availableLetterTypes.map((lt) => (
+          <button
+            key={lt.type}
+            className="letter-card"
+            onClick={() => handleGenerateLetter(lt.type)}
+          >
+            <div className="letter-card-title">{lt.title}</div>
+            <div className="letter-card-desc">{lt.description}</div>
+          </button>
+        ))}
+      </div>
+
+      {/* Letter Modal */}
+      {letterModal && (
+        <div className="letter-modal-overlay" onClick={() => setLetterModal(null)}>
+          <div className="letter-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="letter-modal-header">
+              <div className="letter-modal-title">{letterModal.title}</div>
+              <button className="letter-modal-close" onClick={() => setLetterModal(null)}>✕</button>
+            </div>
+            <div className="letter-modal-body">
+              <div className="letter-text">{letterModal.formattedText}</div>
+            </div>
+            <div className="letter-actions">
+              <button className="letter-action-btn letter-action-primary" onClick={handleCopyLetter}>
+                Copy to Clipboard
+              </button>
+              <button className="letter-action-btn" onClick={handlePrintLetter}>
+                Print
+              </button>
+              <button className="letter-action-btn" onClick={handleEmailLetter}>
+                Send as Email
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{ marginTop: 8 }}>
         {report.status !== 'resolved' && (

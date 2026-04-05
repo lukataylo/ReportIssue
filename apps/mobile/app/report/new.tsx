@@ -25,9 +25,16 @@ import {
   CategoryId,
   ReportLocation,
   Category,
+  classifyImage,
+  isClassifierAvailable,
+  ClassificationSuggestion,
 } from '@fixitlondon/shared';
+import * as FileSystem from 'expo-file-system';
+import Constants from 'expo-constants';
 import { submitReport } from '../../services/reportService';
 import { reverseGeocode } from '../../services/boroughDetection';
+
+const GEMINI_API_KEY = Constants.expoConfig?.extra?.geminiApiKey || '';
 
 const LONDON_CENTER = {
   latitude: 51.509,
@@ -50,6 +57,8 @@ export default function NewReportScreen() {
   const [extras, setExtras] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [authorityName, setAuthorityName] = useState('');
+  const [aiSuggestions, setAiSuggestions] = useState<ClassificationSuggestion[]>([]);
+  const [classifying, setClassifying] = useState(false);
 
   const selectedCategory = selectedCategoryId ? getCategoryById(selectedCategoryId) : null;
 
@@ -82,6 +91,27 @@ export default function NewReportScreen() {
       setAuthorityName('');
     }
   }, [selectedCategory, location]);
+
+  // Classify photo with Gemini when photo is set
+  useEffect(() => {
+    if (!photoUri || !isClassifierAvailable(GEMINI_API_KEY)) return;
+    let cancelled = false;
+    setClassifying(true);
+    (async () => {
+      try {
+        const base64 = await FileSystem.readAsStringAsync(photoUri, { encoding: 'base64' });
+        const ext = photoUri.split('.').pop()?.toLowerCase() || 'jpeg';
+        const mimeType = ext === 'png' ? 'image/png' : 'image/jpeg';
+        const result = await classifyImage(base64, mimeType, { apiKey: GEMINI_API_KEY });
+        if (!cancelled) setAiSuggestions(result.suggestions);
+      } catch {
+        // Classification failed silently — user picks manually
+      } finally {
+        if (!cancelled) setClassifying(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [photoUri]);
 
   // If categoryId was passed, skip to step 2
   useEffect(() => {
@@ -274,6 +304,43 @@ export default function NewReportScreen() {
         {/* Step 3: Category selection */}
         {step === 3 && (
           <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
+            {/* AI Suggestions */}
+            {classifying && (
+              <View style={styles.aiSection}>
+                <View style={styles.aiHeader}>
+                  <ActivityIndicator size="small" color="#3A7BD5" />
+                  <Text style={styles.aiHeaderText}>Analysing photo...</Text>
+                </View>
+              </View>
+            )}
+            {!classifying && aiSuggestions.length > 0 && (
+              <View style={styles.aiSection}>
+                <Text style={styles.aiSectionTitle}>AI Suggestions</Text>
+                {aiSuggestions.map((s) => {
+                  const cat = getCategoryById(s.categoryId);
+                  if (!cat) return null;
+                  return (
+                    <TouchableOpacity
+                      key={s.categoryId}
+                      style={[catStyles.card, { borderLeftColor: cat.color }, selectedCategoryId === s.categoryId && catStyles.cardSelected]}
+                      onPress={() => { setSelectedCategoryId(s.categoryId); setStep(4); }}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={catStyles.icon}>{cat.icon}</Text>
+                      <View style={catStyles.text}>
+                        <Text style={catStyles.title}>{cat.title}</Text>
+                        <Text style={styles.aiReasoning}>{s.reasoning}</Text>
+                      </View>
+                      <View style={styles.confidenceBadge}>
+                        <Text style={styles.confidenceText}>{Math.round(s.confidence * 100)}%</Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+                <Text style={styles.aiDivider}>Or browse all categories:</Text>
+              </View>
+            )}
+
             <TextInput
               style={styles.searchInput}
               placeholder="Search categories..."
@@ -532,4 +599,13 @@ const styles = StyleSheet.create({
 
   submitBtn: { marginTop: 24, padding: 16, borderRadius: 14, alignItems: 'center' },
   submitText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+
+  aiSection: { marginBottom: 12 },
+  aiHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 12 },
+  aiHeaderText: { fontSize: 14, color: '#3A7BD5', fontWeight: '500' },
+  aiSectionTitle: { fontSize: 13, fontWeight: '700', color: '#3A7BD5', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
+  aiReasoning: { fontSize: 12, color: '#6B7280', marginTop: 2, fontStyle: 'italic' },
+  confidenceBadge: { backgroundColor: '#EFF6FF', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, marginLeft: 8 },
+  confidenceText: { fontSize: 12, fontWeight: '700', color: '#3A7BD5' },
+  aiDivider: { fontSize: 13, color: '#9CA3AF', textAlign: 'center', marginTop: 12, marginBottom: 4 },
 });

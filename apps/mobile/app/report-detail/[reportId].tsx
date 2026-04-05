@@ -7,10 +7,25 @@ import {
   StyleSheet,
   Alert,
   Image,
+  Modal,
+  Share,
+  Linking,
 } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { Report, getCategoryById, lookupMP, getWriteToThemUrl } from '@fixitlondon/shared';
+import {
+  Report,
+  getCategoryById,
+  lookupMP,
+  getWriteToThemUrl,
+  getAvailableLetterTypes,
+  generateLetter,
+  getAuthorityById,
+  GeneratedLetter,
+  LetterType,
+  LetterRecipient,
+} from '@fixitlondon/shared';
 import { getReportById, deleteReport } from '../../services/storage';
 import {
   getEscalationStatus,
@@ -20,6 +35,13 @@ import {
 } from '../../services/escalationService';
 import { composeEscalationEmail } from '../../services/emailService';
 import { getProfile } from '../../services/profileService';
+
+const OMBUDSMAN_RECIPIENT: LetterRecipient = {
+  name: 'Local Government and Social Care Ombudsman',
+  role: 'Ombudsman',
+  organisation: 'LGSCO',
+  address: 'PO Box 4771, Coventry CV4 0EH',
+};
 
 export default function ReportDetailScreen() {
   const { reportId } = useLocalSearchParams<{ reportId: string }>();
@@ -56,6 +78,78 @@ export default function ReportDetailScreen() {
 
   const category = getCategoryById(report.categoryId);
   const escalation = getEscalationStatus(report);
+  const [letterModal, setLetterModal] = useState<GeneratedLetter | null>(null);
+  const availableLetterTypes = getAvailableLetterTypes(report);
+
+  const getRecipient = (letterType: LetterType): LetterRecipient => {
+    if (letterType === 'ombudsman-complaint') return OMBUDSMAN_RECIPIENT;
+    if (letterType === 'escalation-councillor') {
+      return {
+        name: report.councillorName || '[Councillor Name]',
+        role: 'Ward Councillor',
+        organisation: report.authorityName || 'Local Council',
+        email: report.councillorEmail,
+      };
+    }
+    if (letterType === 'escalation-mp') {
+      return {
+        name: report.mpName || '[MP Name]',
+        role: 'Member of Parliament',
+        organisation: 'House of Commons',
+        email: report.mpEmail,
+      };
+    }
+    // Default: authority
+    const authority = getAuthorityById(report.authorityId);
+    return {
+      name: authority?.name || report.authorityName,
+      role: 'Complaints Department',
+      organisation: authority?.name || report.authorityName,
+      email: authority?.contactEmail,
+    };
+  };
+
+  const handleGenerateLetter = async (letterType: LetterType) => {
+    const profile = await getProfile();
+    if (!profile) {
+      Alert.alert('Profile needed', 'Please set up your profile first (name and postcode).');
+      return;
+    }
+    if (!category) return;
+    const daysSince = Math.floor((Date.now() - new Date(report.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+    const escalationDates = report.escalationHistory
+      .filter((e) => e.stage >= 2)
+      .map((e) => new Date(e.date).toLocaleDateString('en-GB'));
+
+    const letter = generateLetter(letterType, {
+      report,
+      category,
+      profile,
+      recipient: getRecipient(letterType),
+      daysSinceSubmission: daysSince,
+      previousEscalationDates: escalationDates,
+    });
+    setLetterModal(letter);
+  };
+
+  const handleCopyLetter = async () => {
+    if (!letterModal) return;
+    await Clipboard.setStringAsync(letterModal.formattedText);
+    Alert.alert('Copied', 'Letter copied to clipboard.');
+  };
+
+  const handleShareLetter = async () => {
+    if (!letterModal) return;
+    await Share.share({ message: letterModal.formattedText, title: letterModal.subject });
+  };
+
+  const handleEmailLetter = () => {
+    if (!letterModal) return;
+    const email = letterModal.recipient.email || '';
+    const subject = encodeURIComponent(letterModal.subject);
+    const body = encodeURIComponent(letterModal.formattedText);
+    Linking.openURL(`mailto:${email}?subject=${subject}&body=${body}`);
+  };
 
   const handleEscalate = async (stage: 2 | 3 | 4) => {
     const labels = {
@@ -287,6 +381,48 @@ export default function ReportDetailScreen() {
           })}
         </View>
 
+        {/* Letter Generator */}
+        <Text style={styles.sectionTitle}>Generate Formal Letter</Text>
+        <View style={styles.letterSection}>
+          {availableLetterTypes.map((lt) => (
+            <TouchableOpacity
+              key={lt.type}
+              style={styles.letterCard}
+              onPress={() => handleGenerateLetter(lt.type)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.letterCardTitle}>{lt.title}</Text>
+              <Text style={styles.letterCardDesc}>{lt.description}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Letter Modal */}
+        <Modal visible={!!letterModal} animationType="slide" presentationStyle="pageSheet">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>{letterModal?.title}</Text>
+              <TouchableOpacity onPress={() => setLetterModal(null)}>
+                <Text style={styles.modalClose}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.modalBody}>
+              <Text style={styles.letterText}>{letterModal?.formattedText}</Text>
+            </ScrollView>
+            <View style={styles.modalActions}>
+              <TouchableOpacity style={styles.letterActionBtn} onPress={handleCopyLetter}>
+                <Text style={styles.letterActionText}>Copy</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.letterActionBtn} onPress={handleShareLetter}>
+                <Text style={styles.letterActionText}>Share</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.letterActionBtn, styles.letterActionPrimary]} onPress={handleEmailLetter}>
+                <Text style={[styles.letterActionText, { color: '#fff' }]}>Email</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
         {/* Actions */}
         <View style={styles.actions}>
           {report.status !== 'resolved' && (
@@ -394,4 +530,34 @@ const styles = StyleSheet.create({
     alignItems: 'center', borderWidth: 1, borderColor: '#FECACA',
   },
   deleteBtnText: { color: '#EF4444', fontSize: 15, fontWeight: '500' },
+
+  // Letter generator
+  letterSection: { marginBottom: 24 },
+  letterCard: {
+    backgroundColor: '#fff', borderRadius: 10, padding: 14, marginBottom: 8,
+    borderWidth: 1, borderColor: '#E5E7EB',
+  },
+  letterCardTitle: { fontSize: 14, fontWeight: '600', color: '#1F2937' },
+  letterCardDesc: { fontSize: 12, color: '#6B7280', marginTop: 2 },
+
+  // Letter modal
+  modalContainer: { flex: 1, backgroundColor: '#fff' },
+  modalHeader: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    padding: 16, borderBottomWidth: 1, borderBottomColor: '#E5E7EB',
+  },
+  modalTitle: { fontSize: 16, fontWeight: '700', color: '#1F2937' },
+  modalClose: { fontSize: 20, color: '#9CA3AF', padding: 4 },
+  modalBody: { flex: 1, padding: 20 },
+  letterText: { fontFamily: 'Georgia', fontSize: 14, lineHeight: 22, color: '#1F2937' },
+  modalActions: {
+    flexDirection: 'row', gap: 8, padding: 16,
+    borderTopWidth: 1, borderTopColor: '#E5E7EB',
+  },
+  letterActionBtn: {
+    flex: 1, padding: 12, borderRadius: 8, alignItems: 'center',
+    borderWidth: 1, borderColor: '#E5E7EB', backgroundColor: '#fff',
+  },
+  letterActionPrimary: { backgroundColor: '#3A7BD5', borderColor: '#3A7BD5' },
+  letterActionText: { fontSize: 14, fontWeight: '600', color: '#374151' },
 });

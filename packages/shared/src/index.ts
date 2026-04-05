@@ -33,5 +33,13 @@ export {
   resolveDeepLinkUrl,
 } from './services/reportHelpers';
 
+// Image classification (Gemini Flash)
+export { classifyImage, isClassifierAvailable } from './services/imageClassifier';
+
+// Letter template generator
+export { generateLetter, getAvailableLetterTypes, LETTER_TYPES } from './services/letterTemplates';
+
 // Re-export escalation action types
 export type { EscalationAction, EscalationStatus } from './services/escalationService';
+export type { ClassificationSuggestion, ClassificationResult, ClassifierConfig } from './services/imageClassifier';
+export type { LetterType, LetterRecipient, LetterContext, GeneratedLetter } from './services/letterTemplates';

@@ -10,8 +10,13 @@ import {
   ReportLocation,
   CategoryId,
   Category,
+  classifyImage,
+  isClassifierAvailable,
+  ClassificationSuggestion,
 } from '@fixitlondon/shared';
 import { submitReport } from '../services/reportService';
+
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
 export default function NewReportPage() {
   const navigate = useNavigate();
@@ -28,6 +33,8 @@ export default function NewReportPage() {
   const [extras, setExtras] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [authorityName, setAuthorityName] = useState('');
+  const [aiSuggestions, setAiSuggestions] = useState<ClassificationSuggestion[]>([]);
+  const [classifying, setClassifying] = useState(false);
 
   const selectedCategory = selectedCategoryId ? getCategoryById(selectedCategoryId) : null;
 
@@ -71,6 +78,29 @@ export default function NewReportPage() {
       setAuthorityName('');
     }
   }, [selectedCategory, location]);
+
+  // Classify photo with Gemini when photo is set
+  useEffect(() => {
+    if (!photoUri || !isClassifierAvailable(GEMINI_API_KEY)) return;
+    let cancelled = false;
+    setClassifying(true);
+    (async () => {
+      try {
+        // Web photos are data URLs — extract base64 and mime
+        const [header, base64] = photoUri.split(',');
+        const mimeMatch = header.match(/data:(.*?);/);
+        const mimeType = mimeMatch?.[1] || 'image/jpeg';
+        if (!base64) return;
+        const result = await classifyImage(base64, mimeType, { apiKey: GEMINI_API_KEY });
+        if (!cancelled) setAiSuggestions(result.suggestions);
+      } catch {
+        // Classification failed silently
+      } finally {
+        if (!cancelled) setClassifying(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [photoUri]);
 
   const filteredCategories = useMemo(() => {
     if (!categorySearch.trim()) return CATEGORIES;
@@ -204,6 +234,40 @@ export default function NewReportPage() {
       {/* Step 3: Category */}
       {step === 3 && (
         <div>
+          {/* AI Suggestions */}
+          {classifying && (
+            <div className="ai-section">
+              <div className="ai-header">
+                <span className="spinner" /> Analysing photo...
+              </div>
+            </div>
+          )}
+          {!classifying && aiSuggestions.length > 0 && (
+            <div className="ai-section">
+              <div className="ai-section-title">AI Suggestions</div>
+              {aiSuggestions.map((s) => {
+                const cat = getCategoryById(s.categoryId);
+                if (!cat) return null;
+                return (
+                  <button
+                    key={s.categoryId}
+                    className={`card ai-card ${selectedCategoryId === s.categoryId ? 'card-selected' : ''}`}
+                    style={{ borderLeftColor: cat.color, width: '100%', textAlign: 'left' }}
+                    onClick={() => { setSelectedCategoryId(s.categoryId); setStep(4); }}
+                  >
+                    <span className="card-icon">{cat.icon}</span>
+                    <div className="card-text">
+                      <div className="card-title">{cat.title}</div>
+                      <div className="ai-reasoning">{s.reasoning}</div>
+                    </div>
+                    <span className="confidence-badge">{Math.round(s.confidence * 100)}%</span>
+                  </button>
+                );
+              })}
+              <div className="ai-divider">Or browse all categories:</div>
+            </div>
+          )}
+
           <input
             className="input"
             placeholder="Search categories..."
