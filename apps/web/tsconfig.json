@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "paths": {
+      "@fixitlondon/shared": ["../../packages/shared/src"],
+      "@fixitlondon/shared/*": ["../../packages/shared/src/*"]
+    }
+  },
+  "include": ["src", "../../packages/shared/src"]
+}

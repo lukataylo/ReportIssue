@@ -1,0 +1,38 @@
+{
+  "name": "@fixitlondon/mobile",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "ios": "expo run:ios",
+    "android": "expo run:android",
+    "build:ios": "eas build --platform ios",
+    "build:android": "eas build --platform android",
+    "submit:ios": "eas submit --platform ios"
+  },
+  "dependencies": {
+    "@fixitlondon/shared": "*",
+    "@react-native-async-storage/async-storage": "3.0.2",
+    "expo": "~55.0.0",
+    "expo-clipboard": "~55.0.11",
+    "expo-constants": "~55.0.0",
+    "expo-image-picker": "~55.0.0",
+    "expo-linking": "~55.0.0",
+    "expo-location": "~55.0.0",
+    "expo-router": "~55.0.0",
+    "expo-status-bar": "~55.0.0",
+    "expo-web-browser": "~55.0.0",
+    "react": "19.0.0",
+    "react-native": "0.79.2",
+    "react-native-gesture-handler": "~2.24.0",
+    "react-native-maps": "1.27.2",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "~4.10.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@types/react": "~19.0.0",
+    "typescript": "~5.7.0"
+  },
+  "private": true
+}
